@@ -681,6 +681,9 @@ export default class VideoPlayer extends Component {
         paused: nextProps.paused
       })
     }
+    if (this.props.is_full_screen != nextProps.is_full_screen && nextProps.paused === true) {
+      this.needResetPosition = true;
+    }
   }
 
   /**
@@ -722,10 +725,10 @@ export default class VideoPlayer extends Component {
        * position in the onProgress listener.
        */
       onPanResponderGrant: ( evt, gestureState ) => {
-        let state = this.state;
         this.clearControlTimeout();
-        state.seeking = true;
-        this.setState( state );
+        this.setState( {
+          seeking:true,
+        } );
       },
 
       /**
@@ -733,6 +736,7 @@ export default class VideoPlayer extends Component {
        */
       onPanResponderMove: ( evt, gestureState ) => {
         const position = this.state.seekerOffset + gestureState.dx;
+        this.cacheSeekerOffset = position;
         this.setSeekerPosition( position );
       },
 
@@ -743,16 +747,22 @@ export default class VideoPlayer extends Component {
        */
       onPanResponderRelease: ( evt, gestureState ) => {
         const time = this.calculateTimeFromSeekerPosition();
-        let state = this.state;
+        let paused = this.state.paused;
+        const state = this.state;
         if ( time >= state.duration && ! state.loading ) {
-          state.paused = true;
+          paused = true;
           this.events.onEnd();
         } else {
           this.seekTo( time );
           this.setControlTimeout();
-          state.seeking = false;
         }
-        this.setState( state );
+        setTimeout(() => {
+          this.setState({
+            paused,
+            seekerOffset:this.cacheSeekerOffset,
+            seeking:false,
+          });
+        }, 50);
       }
     });
   }
@@ -948,7 +958,7 @@ export default class VideoPlayer extends Component {
       style={{
         top:10,
         width:35,
-        marginLeft:10,
+        marginLeft:20,
         backgroundColor: 'transparent',
         alignItems:'center',
         fontSize:14,
@@ -977,7 +987,14 @@ export default class VideoPlayer extends Component {
       <View style={ styles.seekbar.container }>
         <View
           style={ styles.seekbar.track }
-          onLayout={ event => this.player.seekerWidth = event.nativeEvent.layout.width }
+          onLayout={ event => {
+            this.player.seekerWidth = event.nativeEvent.layout.width
+            if (this.needResetPosition) {
+              const position = this.calculateSeekerPosition();
+              this.setSeekerPosition( position );
+              this.needResetPosition = false;
+            }
+          } }
         >
           <View style={[
             styles.seekbar.fill,
@@ -1109,7 +1126,7 @@ export default class VideoPlayer extends Component {
             source={ this.props.source }
           />
           { this.renderError() }
-          { this.renderTopControls() }
+          { this.props.is_full_screen && this.renderTopControls() }
           { this.renderLoader() }
           { this.renderBottomControls() }
         </View>
