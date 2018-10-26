@@ -10,7 +10,8 @@ import {
   Easing,
   Image,
   View,
-  Text
+  Text,
+  Platform,
 } from 'react-native';
 import _ from 'lodash';
 
@@ -952,6 +953,7 @@ export default class VideoPlayer extends Component {
           fontSize:14,
           color:'#FFFFFF',
         }}
+        allowFontScaling={false}
       >
         {this.getCurrentTimeText()}
       </Text>
@@ -969,6 +971,7 @@ export default class VideoPlayer extends Component {
         fontSize:14,
         color:'#FFFFFF',
       }}
+      allowFontScaling={false}
     >
       {this.calculateTime()}
     </Text>)
@@ -991,7 +994,11 @@ export default class VideoPlayer extends Component {
     return (
       <View style={ styles.seekbar.container }>
         <View
-          style={ styles.seekbar.track }
+          style={[styles.seekbar.track, {
+            shadowColor:'rgba(0,0,0,0.60)',
+            shadowRadius:8,
+            shadowOpacity:0.9,
+          }]}
           onLayout={ event => {
             this.player.seekerWidth = event.nativeEvent.layout.width
             if (this.needResetPosition) {
@@ -1027,7 +1034,7 @@ export default class VideoPlayer extends Component {
               },
               shadowColor:'#4EAEFF',
               shadowRadius:4,
-              shadowOpacity:0,
+              shadowOpacity:0.9,
             } ]}
           />
         </View>
@@ -1326,7 +1333,7 @@ const styles = {
       height: barWidth,
       position: 'relative',
       top: 16,
-      width: '100%'
+      width: '100%',
     },
     fill: {
       backgroundColor: '#FFF',
