@@ -232,6 +232,9 @@ export default class VideoPlayer extends Component {
    */
   _onEnd() {
     this.player.ref.seek(0);
+    let state = this.state;
+    state.paused = true;
+    this.setState( state );
     this.props.onEnd && this.props.onEnd();
   }
 
