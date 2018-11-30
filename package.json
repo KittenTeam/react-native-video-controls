@@ -1,6 +1,6 @@
 {
   "name": "@kitten-team/react-native-video-controls",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A set of GUI controls for the react-native-video component",
   "license": "MIT",
   "main": "VideoPlayer.js",
