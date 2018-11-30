@@ -598,6 +598,15 @@ export default class VideoPlayer extends Component {
   }
 
   /**
+   * Call the video ref seek
+   *
+   * @param time
+   */
+  seek = ( time = 0 ) => {
+    this.player.ref.seek( time );
+  }
+
+  /**
    * Set the position of the volume slider
    *
    * @param {float} position position of the volume handle in px
