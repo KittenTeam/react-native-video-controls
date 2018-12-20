@@ -29,6 +29,8 @@ export default class VideoPlayer extends Component {
     muted:                          false,
     title:                          '',
     rate:                           1,
+    showFullScreenButton:           true,
+    videoPattern:                     1,
   };
 
   constructor( props ) {
@@ -63,6 +65,7 @@ export default class VideoPlayer extends Component {
       currentTime: 0,
       error: false,
       duration: 0,
+      bottomContainStyle:{},
     };
 
     /**
@@ -934,21 +937,24 @@ export default class VideoPlayer extends Component {
     return(
       <Animated.View style={[
         styles.controls.bottom,
-        {
+        (this.props.videoPattern === 1) && {
           opacity: this.animations.bottomControl.opacity,
+          marginBottom: this.animations.bottomControl.marginBottom,
+        },
+        {
           paddingLeft:10,
           paddingRight:10,
-          marginBottom: this.animations.bottomControl.marginBottom,
-        }
+        },
+        this.props.bottomContainStyle,
       ]}>
         <View
           style={{flexDirection:'row'}}
         >
           { playPauseControl }
-          { this.renderCurrentTiemText() }
           { seekbarControl }
-          { this.renderRestTimeText() }
-          { this.renderFullScreenButton() }
+          { this.renderCurrentTiemText() }
+          {/*{ this.renderRestTimeText() }*/}
+          { this.props.showFullScreenButton && this.renderFullScreenButton() }
         </View>
       </Animated.View>
     );
@@ -958,15 +964,16 @@ export default class VideoPlayer extends Component {
     return (
       <Text
         style={{
-          top:10,
-          width:40,
+          top:3,
+          width:65,
+          marginLeft:20,
           backgroundColor: 'transparent',
           fontSize:14,
           color:'#FFFFFF',
         }}
         allowFontScaling={false}
       >
-        {this.getCurrentTimeText()}
+        {this.getCurrentTimeText()}/{this.formatTime(this.state.duration)}
       </Text>
     );
   }
@@ -976,7 +983,6 @@ export default class VideoPlayer extends Component {
       style={{
         top:10,
         width:35,
-        marginLeft:20,
         backgroundColor: 'transparent',
         alignItems:'center',
         fontSize:14,
@@ -993,7 +999,7 @@ export default class VideoPlayer extends Component {
     return <TouchableWithoutFeedback
       onPress={this.props.onPressFullScreenBtn}
     >
-      { <Image source={label}/> }
+      { <Image style={{width:20,height:20, top:2}} source={label}/> }
     </TouchableWithoutFeedback>
   }
 
@@ -1023,7 +1029,7 @@ export default class VideoPlayer extends Component {
             styles.seekbar.fill,
             {
               width: this.state.seekerFillWidth,
-              backgroundColor: this.props.seekColor || '#4EAEFF',
+              backgroundColor: this.props.seekColor || '#FFFFFF',
               borderRadius:12.5,
             }
           ]}/>
@@ -1035,19 +1041,19 @@ export default class VideoPlayer extends Component {
           ]}
           { ...this.player.seekPanResponder.panHandlers }
         >
-          <View style={[
-            styles.seekbar.circle,
-            {
-              backgroundColor: this.props.seekColor || '#4EAEFF',
-              shadowOffset:{
-                width:1,
-                height:1,
-              },
-              shadowColor:'#4EAEFF',
-              shadowRadius:4,
-              shadowOpacity:0.9,
-            } ]}
-          />
+          {/*<View style={[*/}
+            {/*styles.seekbar.circle,*/}
+            {/*{*/}
+              {/*backgroundColor: this.props.seekColor || '#4EAEFF',*/}
+              {/*shadowOffset:{*/}
+                {/*width:1,*/}
+                {/*height:1,*/}
+              {/*},*/}
+              {/*shadowColor:'#4EAEFF',*/}
+              {/*shadowRadius:4,*/}
+              {/*shadowOpacity:0.9,*/}
+            {/*} ]}*/}
+          {/*/>*/}
         </View>
       </View>
     );
@@ -1060,7 +1066,7 @@ export default class VideoPlayer extends Component {
 
     let source = this.state.paused === true ? require( './assets/play.png' ) : require( './assets/stop.png' );
     return this.renderControl(
-      <Image source={ source } />,
+      <Image style={{width:24,height:24, marginRight:10, }} source={ source } />,
       this.methods.togglePlayPause
     );
   }
@@ -1144,12 +1150,12 @@ export default class VideoPlayer extends Component {
             onLoad={ this.events.onLoad }
             onEnd={ this.events.onEnd }
 
-            style={[ styles.player.video, this.styles.videoStyle ]}
+            style={[ this.props.videoPattern === 1 && styles.player.video, this.styles.videoStyle ]}
 
             source={ this.props.source }
           />
           { this.renderError() }
-          { this.props.is_full_screen && this.renderTopControls() }
+          { this.props.videoPattern === 1 && this.props.is_full_screen && this.renderTopControls() }
           { this.renderLoader() }
           { this.renderBottomControls() }
         </View>
@@ -1338,12 +1344,11 @@ const styles = {
       alignSelf: 'stretch',
     },
     track: {
-      backgroundColor: '#FFFFFF',
-      opacity:0.62,
+      backgroundColor: 'rgba(255,255,255,0.2)',
       borderRadius:12.5,
       height: barWidth,
       position: 'relative',
-      top: 16,
+      top: 10,
       width: '100%',
     },
     fill: {
@@ -1354,6 +1359,7 @@ const styles = {
     handle: {
       position: 'absolute',
       marginLeft: -7,
+      backgroundColor:'transparent',
       height: 50,
       width: 50,
     },
