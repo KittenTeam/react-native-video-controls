@@ -414,15 +414,16 @@ export default class VideoPlayer extends Component {
    */
   _toggleControls() {
     let state = this.state;
-    state.showControls = ! state.showControls;
 
-    if ( state.showControls ) {
+    if ( !state.showControls ) {
       this.showControlAnimation();
       this.setControlTimeout();
+      state.showControls = !state.showControls;
     }
     else {
-      this.hideControlAnimation();
       this.clearControlTimeout();
+      this.setControlTimeout();
+      this._togglePlayPause();
     }
 
     this.setState( state );
