@@ -598,6 +598,10 @@ export default class VideoPlayer extends Component {
     state.currentTime = time;
     this.player.ref.seek( time );
     this.setState( state );
+    if ( ! state.seeking ) {
+      const position = this.calculateSeekerPosition();
+      this.setSeekerPosition( position );
+    }
   }
 
   /**
