@@ -1135,7 +1135,7 @@ export default class VideoPlayer extends Component {
         style={[ styles.player.container, this.styles.containerStyle ]}
       >
         <View style={[ styles.player.container, this.styles.containerStyle ]}>
-          {Platform.OS === 'ios' && Platform.isPad && <View style={[{flex:1, width:'100%', height:'100%'}, this.props.bottomContainStyle]}/>}
+          {Platform.OS === 'ios' && this.props.videoPattern === 2 && Platform.isPad && <View style={[{flex:1, width:'100%', height:'100%'}, this.props.bottomContainStyle]}/>}
           <Video
             { ...this.props }
             ref={ videoPlayer => this.player.ref = videoPlayer }
