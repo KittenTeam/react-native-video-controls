@@ -599,8 +599,12 @@ export default class VideoPlayer extends Component {
     this.player.ref.seek( time );
     this.setState( state );
     if ( ! state.seeking ) {
-      const position = this.calculateSeekerPosition();
-      this.setSeekerPosition( position );
+      if (!this.player.seekerWidth) {
+        this.needResetPosition = true
+      } else {
+        const position = this.calculateSeekerPosition();
+        this.setSeekerPosition( position );
+      }
     }
   }
 
