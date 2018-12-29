@@ -927,7 +927,10 @@ export default class VideoPlayer extends Component {
     return this.renderControl(
       backButton,
       this.events.onBack,
-      styles.controls.back
+      {
+        width:50,
+        height:50,
+      },
     );
   }
 
@@ -1001,11 +1004,17 @@ export default class VideoPlayer extends Component {
 
   renderFullScreenButton = () => {
     let label = this.props.is_full_screen ? require('./assets/quit_full.png') : require('./assets/go_full.png');
-    return <TouchableWithoutFeedback
+    return <TouchableHighlight
+      underlayColor="transparent"
+      activeOpacity={ 0.3 }
       onPress={this.props.onPressFullScreenBtn}
+      style={{
+        width:25,
+        height:25,
+      }}
     >
       { <Image style={{width:20,height:20, top:2}} source={label}/> }
-    </TouchableWithoutFeedback>
+    </TouchableHighlight>
   }
 
   /**
