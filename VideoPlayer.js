@@ -363,7 +363,7 @@ export default class VideoPlayer extends Component {
       ),
       Animated.timing(
         this.animations.bottomControl.marginBottom,
-        { toValue: 15 }
+        { toValue: 5 }
       ),
     ]).start();
   }
@@ -1021,45 +1021,54 @@ export default class VideoPlayer extends Component {
     </TouchableHighlight>
   }
 
+  on_press_seek_bar = (event) => {
+    this.resetControlTimeout();
+    const percent = event.nativeEvent.locationX / this.player.seekerWidth;
+    const time = this.state.duration * percent;
+    this.seekTo( time );
+    this.setSeekerPosition(event.nativeEvent.locationX);
+  }
+
   /**
    * Render the seekbar and attach its handlers
    */
   renderSeekbar() {
 
     return (
-      <View style={ styles.seekbar.container }>
-        <View
-          style={[styles.seekbar.track, {
-            shadowColor:'rgba(0,0,0,0.60)',
-            shadowRadius:8,
-            shadowOpacity:0.9,
-          }]}
-          onLayout={ event => {
-            this.player.seekerWidth = event.nativeEvent.layout.width
-            if (this.needResetPosition) {
-              const position = this.calculateSeekerPosition();
-              this.setSeekerPosition( position );
-              this.needResetPosition = false;
-            }
-          } }
-        >
-          <View style={[
-            styles.seekbar.fill,
-            {
-              width: this.state.seekerFillWidth,
-              backgroundColor: this.props.seekColor || '#FFFFFF',
-              borderRadius:12.5,
-            }
-          ]}/>
-        </View>
-        <View
-          style={[
-            styles.seekbar.handle,
-            { left: this.state.seekerPosition }
-          ]}
-          { ...this.player.seekPanResponder.panHandlers }
-        >
-          {/*<View style={[*/}
+      <TouchableWithoutFeedback onPress={this.on_press_seek_bar}>
+        <View style={ [styles.seekbar.container, {height:35,}] }>
+          <View
+            style={[styles.seekbar.track, {
+              shadowColor:'rgba(0,0,0,0.60)',
+              shadowRadius:8,
+              shadowOpacity:0.9,
+            }]}
+            onLayout={ event => {
+              this.player.seekerWidth = event.nativeEvent.layout.width
+              if (this.needResetPosition) {
+                const position = this.calculateSeekerPosition();
+                this.setSeekerPosition( position );
+                this.needResetPosition = false;
+              }
+            } }
+          >
+            <View style={[
+              styles.seekbar.fill,
+              {
+                width: this.state.seekerFillWidth,
+                backgroundColor: this.props.seekColor || '#FFFFFF',
+                borderRadius:12.5,
+              }
+            ]}/>
+          </View>
+          <View
+            style={[
+              styles.seekbar.handle,
+              { left: this.state.seekerPosition }
+            ]}
+            { ...this.player.seekPanResponder.panHandlers }
+          >
+            {/*<View style={[*/}
             {/*styles.seekbar.circle,*/}
             {/*{*/}
               {/*backgroundColor: this.props.seekColor || '#4EAEFF',*/}
@@ -1071,9 +1080,10 @@ export default class VideoPlayer extends Component {
               {/*shadowRadius:4,*/}
               {/*shadowOpacity:0.9,*/}
             {/*} ]}*/}
-          {/*/>*/}
+            {/*/>*/}
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 
@@ -1380,7 +1390,7 @@ const styles = {
       marginLeft: -7,
       backgroundColor:'transparent',
       height: 50,
-      width: 50,
+      width: 15,
     },
     circle: {
       borderRadius: 20,
