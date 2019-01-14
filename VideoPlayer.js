@@ -66,6 +66,8 @@ export default class VideoPlayer extends Component {
       error: false,
       duration: 0,
       bottomContainStyle:{},
+      videoLayoutWidth:0,
+      videoLayoutHeight:0,
     };
 
     /**
@@ -932,8 +934,13 @@ export default class VideoPlayer extends Component {
       backButton,
       this.events.onBack,
       {
-        width:50,
-        height:50,
+        width:80,
+        height:80,
+        backgroundColor:'transparent',
+        top:-12,
+        paddingTop:12,
+        left:-15,
+        paddingLeft:15,
       },
     );
   }
@@ -960,7 +967,7 @@ export default class VideoPlayer extends Component {
         this.props.bottomContainStyle,
       ]}>
         <View
-          style={{flexDirection:'row'}}
+          style={{flexDirection:'row', paddingRight:25}}
         >
           { playPauseControl }
           { seekbarControl }
@@ -1013,8 +1020,15 @@ export default class VideoPlayer extends Component {
       activeOpacity={ 0.3 }
       onPress={this.props.onPressFullScreenBtn}
       style={{
-        width:25,
-        height:25,
+        width:50,
+        height:60,
+        top:-10,
+        paddingTop:10,
+        right:-10,
+        paddingRight:10,
+        backgroundColor:'transparent',
+        position:'absolute',
+        alignItems:'flex-end',
       }}
     >
       { <Image style={{width:20,height:20, top:2}} source={label}/> }
@@ -1182,11 +1196,41 @@ export default class VideoPlayer extends Component {
             style={[ this.props.videoPattern === 1 && styles.player.video, this.styles.videoStyle ]}
 
             source={ this.props.source }
+            onLayout={(ev) => {
+              this.setState({
+                videoLayoutWidth:ev.nativeEvent.layout.width,
+                videoLayoutHeight:ev.nativeEvent.layout.height,
+              })
+            }}
           />
           { this.renderError() }
           { this.props.videoPattern === 1 && this.props.is_full_screen && this.renderTopControls() }
           { this.renderLoader() }
           { this.renderBottomControls() }
+          {
+            this.state.paused && this.render_play_mask()
+          }
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  render_play_mask = () => {
+    if (this.state.videoLayoutWidth === 0) {
+      return;
+    }
+    return (
+      <TouchableWithoutFeedback onPress={this.methods.togglePlayPause}>
+        <View style={[{
+          backgroundColor:'rgba(7,21,37,0.8)',
+          position:'absolute',
+          justifyContent:'center',
+          alignItems:'center',
+          width:this.state.videoLayoutWidth,
+          height:this.state.videoLayoutHeight,
+          top:0,
+        }]}>
+          <Image style={{width:32, height:32, backgroundColor:'transparent'}} source={require('./assets/icn_play.png')}/>
         </View>
       </TouchableWithoutFeedback>
     );
