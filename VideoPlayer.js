@@ -1197,10 +1197,12 @@ export default class VideoPlayer extends Component {
 
             source={ this.props.source }
             onLayout={(ev) => {
-              this.setState({
-                videoLayoutWidth:ev.nativeEvent.layout.width,
-                videoLayoutHeight:ev.nativeEvent.layout.height,
-              })
+              if (ev.nativeEvent.layout.width > 0) {
+                this.setState({
+                  videoLayoutWidth:ev.nativeEvent.layout.width,
+                  videoLayoutHeight:ev.nativeEvent.layout.height,
+                })
+              }
             }}
           />
           { this.renderError() }
