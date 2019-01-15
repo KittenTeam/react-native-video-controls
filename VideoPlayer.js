@@ -68,6 +68,7 @@ export default class VideoPlayer extends Component {
       bottomContainStyle:{},
       videoLayoutWidth:0,
       videoLayoutHeight:0,
+      maskTop:0,
     };
 
     /**
@@ -1201,7 +1202,12 @@ export default class VideoPlayer extends Component {
                 this.setState({
                   videoLayoutWidth:ev.nativeEvent.layout.width,
                   videoLayoutHeight:ev.nativeEvent.layout.height,
-                })
+                });
+              };
+              if (this.props.videoPattern === 2 && Platform.isPad && ev.nativeEvent.layout.y > 0) {
+                this.setState({
+                  maskTop:ev.nativeEvent.layout.y,
+                });
               }
             }}
           />
@@ -1230,7 +1236,7 @@ export default class VideoPlayer extends Component {
           alignItems:'center',
           width:this.state.videoLayoutWidth,
           height:this.state.videoLayoutHeight,
-          top:0,
+          top:this.state.maskTop,
         }]}>
           <Image style={{width:32, height:32, backgroundColor:'transparent'}} source={require('./assets/icn_play.png')}/>
         </View>
