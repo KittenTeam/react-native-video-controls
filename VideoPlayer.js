@@ -5,6 +5,7 @@ import {
   TouchableHighlight,
   ImageBackground,
   PanResponder,
+  Dimensions,
   StyleSheet,
   Animated,
   Easing,
@@ -14,6 +15,9 @@ import {
   Platform,
 } from 'react-native';
 import _ from 'lodash';
+
+const { height, width } = Dimensions.get('window');
+const aspect_ration = width / height;
 
 export default class VideoPlayer extends Component {
 
@@ -1083,19 +1087,6 @@ export default class VideoPlayer extends Component {
             ]}
             { ...this.player.seekPanResponder.panHandlers }
           >
-            {/*<View style={[*/}
-            {/*styles.seekbar.circle,*/}
-            {/*{*/}
-              {/*backgroundColor: this.props.seekColor || '#4EAEFF',*/}
-              {/*shadowOffset:{*/}
-                {/*width:1,*/}
-                {/*height:1,*/}
-              {/*},*/}
-              {/*shadowColor:'#4EAEFF',*/}
-              {/*shadowRadius:4,*/}
-              {/*shadowOpacity:0.9,*/}
-            {/*} ]}*/}
-            {/*/>*/}
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -1177,7 +1168,7 @@ export default class VideoPlayer extends Component {
         style={[ styles.player.container, this.styles.containerStyle ]}
       >
         <View style={[ styles.player.container, this.styles.containerStyle ]}>
-          {Platform.OS === 'ios' && this.props.videoPattern === 2 && Platform.isPad && <View style={[{flex:1, width:'100%', height:'100%'}, this.props.bottomContainStyle]}/>}
+          {aspect_ration < 1.5 && this.props.videoPattern === 2 && <View style={[{flex:1, width:'100%', height:'100%'}, this.props.bottomContainStyle]}/>}
           <Video
             { ...this.props }
             ref={ videoPlayer => this.player.ref = videoPlayer }
@@ -1204,7 +1195,7 @@ export default class VideoPlayer extends Component {
                   videoLayoutHeight:ev.nativeEvent.layout.height,
                 });
               };
-              if (this.props.videoPattern === 2 && Platform.isPad && ev.nativeEvent.layout.y > 0) {
+              if (this.props.videoPattern === 2 && aspect_ration < 1.5 && ev.nativeEvent.layout.y > 0) {
                 this.setState({
                   maskTop:ev.nativeEvent.layout.y,
                 });
