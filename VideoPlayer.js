@@ -528,7 +528,7 @@ export default class VideoPlayer extends Component {
       this.state.duration
     );
 
-    const formattedMinutes = _.padStart( Math.floor( time / 60 ).toFixed( 0 ), 1, 0 );
+    const formattedMinutes = _.padStart( Math.floor( time / 60 ).toFixed( 0 ), 2, 0 );
     const formattedSeconds = _.padStart( Math.floor( time % 60 ).toFixed( 0 ), 2 , 0 );
 
     return `${ symbol }${ formattedMinutes }:${ formattedSeconds }`;
@@ -967,12 +967,12 @@ export default class VideoPlayer extends Component {
         },
         {
           paddingLeft:10,
-          paddingRight:10,
+          paddingRight:this.props.videoPattern === 2 ? 0 : 10,
         },
         this.props.bottomContainStyle,
       ]}>
         <View
-          style={{flexDirection:'row', paddingRight:25}}
+          style={{flexDirection:'row', paddingRight:this.props.videoPattern === 2 ? 0 : 25}}
         >
           { playPauseControl }
           { seekbarControl }
@@ -989,8 +989,9 @@ export default class VideoPlayer extends Component {
       <Text
         style={{
           top:3,
-          width:65,
-          marginLeft:20,
+          width:85,
+          marginLeft:12,
+          marginRight:this.props.videoPattern === 2 ? 12 : 0,
           backgroundColor: 'transparent',
           fontSize:14,
           color:'#FFFFFF',
