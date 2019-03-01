@@ -370,7 +370,7 @@ export default class VideoPlayer extends Component {
       ),
       Animated.timing(
         this.animations.bottomControl.marginBottom,
-        { toValue: 5 }
+        { toValue: 0 }
       ),
     ]).start();
   }
@@ -958,21 +958,45 @@ export default class VideoPlayer extends Component {
     const seekbarControl = this.props.disableSeekbar ? this.renderNullControl() : this.renderSeekbar();
     const playPauseControl = this.props.disablePlayPause ? this.renderNullControl() : this.renderPlayPause();
 
-    return(
+    return this.props.videoPattern === 1 ? (
       <Animated.View style={[
         styles.controls.bottom,
-        (this.props.videoPattern === 1) && {
+        {
           opacity: this.animations.bottomControl.opacity,
           marginBottom: this.animations.bottomControl.marginBottom,
         },
+        this.props.bottomContainStyle,
+      ]}>
+        <ImageBackground
+          source={require('./assets/player_shadow.png')}
+          imageStyle={[styles.controls.vignette]}
+          style={[
+            styles.controls.column,
+            { paddingBottom: 5, paddingLeft:10, paddingRight:10 },
+          ]}
+        >
+          <View
+            style={{flexDirection:'row', paddingRight:25}}
+          >
+            { playPauseControl }
+            { seekbarControl }
+            { this.renderCurrentTiemText() }
+            {/*{ this.renderRestTimeText() }*/}
+            { this.props.showFullScreenButton && this.renderFullScreenButton() }
+          </View>
+        </ImageBackground>
+      </Animated.View>
+    ) : (
+      <Animated.View style={[
+        styles.controls.bottom,
         {
           paddingLeft:10,
-          paddingRight:this.props.videoPattern === 2 ? 0 : 10,
+          paddingRight:0,
         },
         this.props.bottomContainStyle,
       ]}>
         <View
-          style={{flexDirection:'row', paddingRight:this.props.videoPattern === 2 ? 0 : 25}}
+          style={{flexDirection:'row', paddingRight:0}}
         >
           { playPauseControl }
           { seekbarControl }
